@@ -1,0 +1,12 @@
+.idea
+.idea/workspace.xml
+dist
+build
+filelibpy.egg-info
+__pycache__
+*.pyc
+.DS_Store
+examples/test_dir/*
+!examples/media/README.md
+.pytest_cache
+**.egg-info
