@@ -10,3 +10,7 @@ class DiskBaseStorageTestCase(TestCase):
         # Must require `namespace` param
         with self.assertRaises(TypeError):
             Cache()
+
+        # Must require `engine` param
+        with self.assertRaises(TypeError):
+            Cache(namespace="hello")
