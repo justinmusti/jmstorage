@@ -1,4 +1,4 @@
-from .client import CacheManager as Cache
+from .client import Cache
 
 __all__ = [
     "Cache"

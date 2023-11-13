@@ -2,10 +2,11 @@ import concurrent.futures
 
 from jmstorage import Cache
 
-c = Cache(namespace="filelib", path="./test_dir")
+c = Cache(namespace="filelib", engine="disk", path="./test_dir")
 c.set("test", "hello world")
 print('TEST VALUE', c.get("test"))
 c.delete("test")
+c.truncate()
 
 
 # Try threading to see if thread-lock is working.
