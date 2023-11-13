@@ -1,5 +1,4 @@
 import hashlib
-import json
 import os
 import threading
 from pathlib import Path
@@ -25,33 +24,31 @@ class DiskStorageManager(BaseCacheStorageManager):
         # Check the directory if exists, attempt to create if not
         if not os.path.isdir(self.path):
             Path(self.path).mkdir(
-                # mode=self.WRITABLE_PERMISSIONS,
                 parents=True,
                 exist_ok=True
             )
         hasher = hashlib.sha256()
         hasher.update(bytes(self.namespace, "utf8"))
         file_name = hasher.hexdigest()
-        print("FULL PATH", os.path.join(os.path.abspath(self.path), file_name))
         self.storage_location = os.path.join(os.path.abspath(self.path), file_name)
 
     def _read_file(self):
         try:
             with open(self.storage_location, "rb") as f:
                 file_data = f.read()
-                print("FILE CONTENT", file_data)
                 if not file_data:
                     return {}
-                file_data = json.loads(file_data)
-                return file_data
+                return self.deserialize(file_data)
+
         except FileNotFoundError:
             return {}
 
     def _write_file(self, data: dict):
 
         with threading.Lock():
-            with open(self.storage_location, "w") as f:
-                f.write(json.dumps(data))
+            with open(self.storage_location, "wb") as f:
+                data = self.serialize(data)
+                f.write(data)
         return True
 
     def get(self, key):
@@ -63,9 +60,13 @@ class DiskStorageManager(BaseCacheStorageManager):
         data = self._read_file()
         return data.get(key)
 
+    def pop(self, key):
+        data = self.get(key)
+        self.delete(key)
+        return data
+
     def set(self, key, value):
         data = self._read_file()
-        print("READ FILE", data)
         data[key] = value
         return self._write_file(data)
 
@@ -75,7 +76,12 @@ class DiskStorageManager(BaseCacheStorageManager):
         Do not delete the storage itself.
         """
         data = self._read_file()
-        print("PRE POP", data)
         data.pop(key)
-        print("POST POP", data)
         self._write_file(data)
+
+    def truncate(self):
+        """
+        Remove everything in the file
+        Set file content to and empty dict: {}
+        """
+        return self._write_file({})

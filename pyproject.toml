@@ -5,10 +5,12 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "jmstorage"
 dynamic = ["version"]
-description = "Key value caching machanism with backends: disk, slite, redis, MySQL, PostgrSQl."
+description = "Key value caching machanism with backends: disk, Sqlite, Redis, MySQL, PostgreSQL."
 readme = "README.md"
 requires-python = ">=3.8"
-dependencies = []
+dependencies = [
+    "dill~=0.3"
+]
 license = { file = "LICENSE" }
 authors = [{ name = "JustinMusti" }]
 
